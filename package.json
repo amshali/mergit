@@ -1,0 +1,17 @@
+{
+  "name": "mergit",
+  "version": "1.0",
+  "description": "Merge tool",
+  "dependencies": {
+    "body-parser": "1.19",
+    "express": "4.17",
+    "optimist": "0.6.1",
+    "codemirror-minified": "5.52"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Amin Shali",
+  "license": "MIT"
+}
