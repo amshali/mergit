@@ -1,17 +1,22 @@
 {
   "name": "mergit",
-  "version": "1.0",
-  "description": "Merge tool",
-  "dependencies": {
-    "body-parser": "1.19",
-    "express": "4.17",
-    "optimist": "0.6.1",
-    "codemirror-minified": "5.52"
-  },
-  "devDependencies": {},
+  "version": "1.0.0",
+  "description": "web based merge tool to use from command line",
+  "main": "mergit.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Amin Shali",
-  "license": "MIT"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amshali/mergit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amshali/mergit/issues"
+  },
+  "homepage": "https://github.com/amshali/mergit#readme",
+  "dependencies": {
+    "optimist": "^0.6.1"
+  }
 }

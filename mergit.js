@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var argv = require('optimist')
     .default('port', 9898)
     .string('local')
