@@ -5,7 +5,8 @@ var argv = require('optimist')
     .string('local')
     .string('remote')
     .string('merged')
-    .demand(['local', 'remote', 'merged'])
+    .default('diff', false)
+    .demand(['local', 'remote'])
     .argv;
 var express = require('express');
 var app = require('express')();
@@ -35,7 +36,8 @@ app.get('/get-local-remote', function(req, res) {
   var data = {
     LocalContent: fs.readFileSync(argv.local, {encoding: 'utf8'}),
     RemoteContent: fs.readFileSync(argv.remote, {encoding: 'utf8'}),
-		Filename: path.basename(argv.merged)
+		Filename: path.basename(argv.local),
+		DiffOnly: argv.diff
 	};
   res.json(data);
 });
@@ -45,6 +47,12 @@ app.get('/close', function(req, res) {
 });
 
 app.post('/save', function(req, res) {
+	if (argv.diff) {
+    res.json({
+      Status: 'OK',
+    });
+		return;
+	}
   try {
     fs.writeFileSync(argv.merged, req.body.Content);
     res.json({

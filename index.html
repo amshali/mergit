@@ -181,6 +181,9 @@ function trySave() {
 
 function initUI() {
   $.get('/get-local-remote').done(function(data) {
+		if (data.DiffOnly) {
+			$('#save-btn').html("Close");
+		}
 	  var target = document.getElementById("view");
 	  target.innerHTML = "";
 	  mergeView = CodeMirror.MergeView(target, {
@@ -199,6 +202,7 @@ function initUI() {
     CodeMirror.autoLoadMode(mergeView.rightOriginal(), mime.Mode);
 		mergeView.options.mode = mime.Mode;
 		mergeView.editor().setOption('mode', mime.Spec);
+		mergeView.editor().setOption('readOnly', data.DiffOnly);
 		mergeView.rightOriginal().setOption('mode', mime.Spec);
 	  resizeView();
   }).fail(function() {
