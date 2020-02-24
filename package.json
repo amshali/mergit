@@ -17,10 +17,13 @@
   },
   "homepage": "https://github.com/amshali/mergit#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.4.1",
     "codemirror-minified": "^5.52.0",
     "diff-match-patch": "^1.0.4",
     "express": "^4.17.1",
     "jquery": "^3.4.1",
-    "optimist": "^0.6.1"
+    "optimist": "^0.6.1",
+    "puppeteer": "^2.1.1"
   }
 }
