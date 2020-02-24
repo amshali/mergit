@@ -14,6 +14,7 @@ var fs = require('fs');
 var bodyParser = require('body-parser');
 var child_process = require('child_process');
 const puppeteer = require('puppeteer');
+const path = require('path');
 
 app.use(bodyParser.json({limit: '5mb'}));       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -26,10 +27,6 @@ app.use('/codemirror', express.static(__dirname + '/node_modules/codemirror-mini
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
 
-console.log('Local: ' + argv.local);
-console.log('Remote: ' + argv.remote);
-console.log('Merged: ' + argv.merged);
-
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
@@ -38,7 +35,7 @@ app.get('/get-local-remote', function(req, res) {
   var data = {
     LocalContent: fs.readFileSync(argv.local, {encoding: 'utf8'}),
     RemoteContent: fs.readFileSync(argv.remote, {encoding: 'utf8'}),
-		LocalFilename: argv.local
+		Filename: path.basename(argv.merged)
 	};
   res.json(data);
 });

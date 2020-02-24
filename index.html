@@ -189,7 +189,8 @@ function initUI() {
 	    connect: "align",
 	    collapseIdentical: false
 	  });
-    var mime = detectMode(data.LocalFilename);
+    var mime = detectMode(data.Filename);
+		document.title = "Merging " + data.Filename;
     CodeMirror.autoLoadMode(mergeView.editor(), mime.Mode);
     CodeMirror.autoLoadMode(mergeView.rightOriginal(), mime.Mode);
 		mergeView.options.mode = mime.Mode;
