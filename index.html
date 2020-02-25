@@ -135,9 +135,9 @@
   <div align="center">
       <table style="width: 100%">
           <tbody><tr>
-    <td style="width: 48%; text-align: left;"><span class="fileloc badge badge-secondary">Local</span></td>
-    <td><button type="button" class="btn btn-sm btn-success" id="save-btn">Close</button></td>
-    <td style="width: 48%; text-align: right;"><span class="fileloc badge badge-secondary">Remote</span></td>
+    <td style="width: 40%; text-align: left;"><span class="fileloc badge badge-secondary">Local</span></td>
+    <td style="text-align: center"><button type="button" class="btn btn-sm btn-success" id="save-btn">Close</button></td>
+    <td style="width: 40%; text-align: right;"><span class="fileloc badge badge-secondary">Remote</span></td>
           </tr>
       </tbody></table>
   </div>
@@ -202,6 +202,8 @@ function initUI() {
     diffOnly = data.DiffOnly;
     if (data.DiffOnly) {
       $('#save-btn').html("Close");
+    } else {
+      $('#save-btn').html("Save & Close");
     }
     var target = document.getElementById("view");
     target.innerHTML = "";
