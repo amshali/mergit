@@ -101,8 +101,8 @@
 <style>
   body {
     font-family: Monaco, 'Roboto Mono', monospace;
-		font-size: 1.2em;
-		margin: 2px;
+    font-size: 1.2em;
+    margin: 2px;
   }
   .CodeMirror { line-height: 1.2; }
   @media screen and (min-width: 1300px) {
@@ -116,37 +116,38 @@
     padding: 0 3px;
     border-radius: 3px;
   }
-	div.container {
-		margin-left: 10px;
-	}
-	.CodeMirror-merge-2pane .CodeMirror-merge-gap {
-	    width: 3%;
-	}
-	.fileloc {
-		margin-left: 20px;
-		margin-right: 20px;
-	}
+  div.container {
+    margin-left: 10px;
+  }
+  .CodeMirror-merge-2pane .CodeMirror-merge-gap {
+      width: 3%;
+  }
+  .fileloc {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
 </style>
 </head>
 <body>
 <div class="container" align="center">
-	<span class="fileloc badge badge-secondary">Local</span>
+  <span class="fileloc badge badge-secondary">Local</span>
   <button type="button" class="btn btn-sm btn-success" id="save-btn">Save and Close</button>
-	<span class="fileloc badge badge-secondary">Remote</span>
+  <span class="fileloc badge badge-secondary">Remote</span>
 </div>
 <div id="view"></div>
 
 <script>
 var mergeView;
-	
+var diffOnly = false;
+
 function resizeView() {
   var h = $(window).height() - 50;
   $("div.CodeMirror").height(h);
   $("div.CodeMirror-merge-editor").height(h);
   $("div.CodeMirror-merge").height(h);
   $("div#view").height(h);
-	mergeView.editor().refresh();
-	mergeView.rightOriginal().refresh();
+  mergeView.editor().refresh();
+  mergeView.rightOriginal().refresh();
 }
 
 function detectMode(filename) {
@@ -169,17 +170,21 @@ function detectMode(filename) {
 }
 
 function trySave() {
+  if (diffOnly) {
+    $.get("/close");
+    return;
+  }
   var request = {
     Content: mergeView.editor().getDoc().getValue(),
   };
   $.post("/save", request, function(resp) {
     if (resp.Status == 'OK') {
-			$.get("/close");
+      $.get("/close");
     } else {
-			console.log(resp.Message);
+      console.log(resp.Message);
       alert("Error saving merged file: " + resp.Message);
     }
-		$("body").html("<b>You can now close the window.</b>");
+    $("body").html("<b>You can now close the window.</b>");
   }).fail(function() {
     alert('An error occured while trying to save the file.');
   });
@@ -187,30 +192,30 @@ function trySave() {
 
 function initUI() {
   $.get('/get-local-remote').done(function(data) {
-		if (data.DiffOnly) {
-			$('#save-btn').html("Close");
-		}
-	  var target = document.getElementById("view");
-	  target.innerHTML = "";
-	  mergeView = CodeMirror.MergeView(target, {
-	    value: data.LocalContent,
-	    origLeft: null,
-	    orig: data.RemoteContent,
-	    lineNumbers: true,
-	    mode: null,
-	    highlightDifferences: true,
-	    connect: "align",
-	    collapseIdentical: false
-	  });
+    diffOnly = data.DiffOnly;
+    if (data.DiffOnly) {
+      $('#save-btn').html("Close");
+    }
+    var target = document.getElementById("view");
+    target.innerHTML = "";
+    mergeView = CodeMirror.MergeView(target, {
+      value: data.LocalContent,
+      origLeft: null,
+      orig: data.RemoteContent,
+      lineNumbers: true,
+      mode: null,
+      highlightDifferences: true,
+      connect: "align",
+      collapseIdentical: false
+    });
     var mime = detectMode(data.Filename);
-		document.title = "Merging " + data.Filename;
+    document.title = "Merging " + data.Filename;
     CodeMirror.autoLoadMode(mergeView.editor(), mime.Mode);
     CodeMirror.autoLoadMode(mergeView.rightOriginal(), mime.Mode);
-		mergeView.options.mode = mime.Mode;
-		mergeView.editor().setOption('mode', mime.Spec);
-		mergeView.editor().setOption('readOnly', data.DiffOnly);
-		mergeView.rightOriginal().setOption('mode', mime.Spec);
-	  resizeView();
+    mergeView.options.mode = mime.Mode;
+    mergeView.editor().setOption('mode', mime.Spec);
+    mergeView.rightOriginal().setOption('mode', mime.Spec);
+    resizeView();
   }).fail(function() {
     alert('Failed to open the file.');
   });
@@ -222,9 +227,9 @@ $(window).resize(function() {
 
 window.onload = function() {
   initUI();
-	$("#save-btn").click(function() {
-		trySave();
-	});
+  $("#save-btn").click(function() {
+    trySave();
+  });
 };
 </script>
 

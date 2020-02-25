@@ -32,35 +32,45 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+var localdata, remotedata;
+
+try {
+  localdata = fs.readFileSync(argv.local, {encoding: 'utf8'});
+  remotedata = fs.readFileSync(argv.remote, {encoding: 'utf8'});
+} catch(e) {
+  console.log(e);
+  process.exit(1);
+}
+
 app.get('/get-local-remote', function(req, res) {
   var data = {
-    LocalContent: fs.readFileSync(argv.local, {encoding: 'utf8'}),
-    RemoteContent: fs.readFileSync(argv.remote, {encoding: 'utf8'}),
-		Filename: path.basename(argv.local),
-		DiffOnly: argv.diff
-	};
+    LocalContent: localdata,
+    RemoteContent: remotedata,
+    Filename: path.basename(argv.local),
+    DiffOnly: argv.diff
+  };
   res.json(data);
 });
 
 app.get('/close', function(req, res) {
-	process.exit(0);
+  process.exit(0);
 });
 
 app.post('/save', function(req, res) {
-	if (argv.diff) {
+  if (argv.diff) {
     res.json({
       Status: 'OK',
     });
-		return;
-	}
+    return;
+  }
   try {
     fs.writeFileSync(argv.merged, req.body.Content);
     res.json({
       Status: 'OK',
     });
-		return;
+    return;
   } catch(e) {
-		console.log(e);
+    console.log(e);
     res.json({
       Status: 'ERROR',
       Message: e
@@ -72,10 +82,10 @@ http.listen(argv.port, '127.0.0.1');
 
 (async () => {
   const browser = await puppeteer.launch({
-		  headless: false,
-		  args: ['--app=http://localhost:9898'],
-			executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-		}
+      headless: false,
+      args: ['--app=http://localhost:9898'],
+      executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    }
   );
   process.on('exit', async () => {
     await browser.close();
