@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 var argv = require('optimist')
-    .default('port', 9898)
-    .string('local')
-    .string('remote')
-    .string('merged')
-    .default('diff', false)
-    .demand(['local', 'remote'])
-    .argv;
+  .default('port', 9898)
+  .string('local')
+  .string('remote')
+  .string('merged')
+  .default('diff', false)
+  .demand(['local', 'remote'])
+  .argv;
 var os = require('os');
 var express = require('express');
 var app = express();
@@ -17,8 +17,10 @@ var child_process = require('child_process');
 const puppeteer = require('puppeteer');
 const path = require('path');
 
-app.use(bodyParser.json({limit: '5mb'}));       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+app.use(bodyParser.json({
+  limit: '5mb'
+})); // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
   limit: '5mb',
   extended: true
 }));
@@ -35,9 +37,13 @@ app.get('/', function(req, res) {
 var localdata, remotedata;
 
 try {
-  localdata = fs.readFileSync(argv.local, {encoding: 'utf8'});
-  remotedata = fs.readFileSync(argv.remote, {encoding: 'utf8'});
-} catch(e) {
+  localdata = fs.readFileSync(argv.local, {
+    encoding: 'utf8'
+  });
+  remotedata = fs.readFileSync(argv.remote, {
+    encoding: 'utf8'
+  });
+} catch (e) {
   console.log(e);
   process.exit(1);
 }
@@ -75,7 +81,7 @@ app.post('/save', function(req, res) {
       Status: 'OK',
     });
     return;
-  } catch(e) {
+  } catch (e) {
     console.log(e);
     res.json({
       Status: 'ERROR',
@@ -95,11 +101,10 @@ function getChromePath() {
 let server = app.listen(0, () => {
   (async () => {
     const browser = await puppeteer.launch({
-        headless: false,
-        args: ['--app=http://localhost:' + server.address().port],
-        executablePath: getChromePath()
-      }
-    );
+      headless: false,
+      args: ['--app=http://localhost:' + server.address().port],
+      executablePath: getChromePath()
+    });
     process.on('exit', async () => {
       await browser.close();
     });
@@ -108,7 +113,7 @@ let server = app.listen(0, () => {
 
 var heartbeatRcv = Date.now();
 setInterval(() => {
-  if(Date.now() - heartbeatRcv > 1100) {
+  if (Date.now() - heartbeatRcv > 1100) {
     console.log("View process exited. I might as well.");
     process.exit(1);
   }

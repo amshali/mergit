@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>Merge</title>
@@ -98,155 +99,155 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
   <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <script src="/bootstrap/js/bootstrap.min.js"></script>
-<style>
-  body {
-    font-family: Monaco, 'Roboto Mono', monospace;
-    font-size: 1.2em;
-    margin: 2px;
-  }
-  .CodeMirror { line-height: 1.2; }
-  @media screen and (min-width: 1300px) {
-    article { max-width: 1000px; }
-    #nav { border-right: 499px solid transparent; }
-  }
-  span.clicky {
-    cursor: pointer;
-    background: #d70;
-    color: white;
-    padding: 0 3px;
-    border-radius: 3px;
-  }
-  div.container {
-    margin-left: 10px;
-  }
-  .CodeMirror-merge-2pane .CodeMirror-merge-gap {
-    width: 3%;
-  }
-  .CodeMirror-merge-2pane .CodeMirror-merge-pane {
-    width: 48%;
-  }
-  .fileloc {
-    margin-left: 20px;
-    margin-right: 20px;
-  }
-</style>
+  <style>
+    body {
+      font-family: Monaco, 'Roboto Mono', monospace;
+      font-size: 1.2em;
+      margin: 2px;
+    }
+
+    .CodeMirror {
+      line-height: 1.2;
+    }
+
+    div.container {
+      margin-left: 10px;
+    }
+
+    .CodeMirror-merge-2pane .CodeMirror-merge-gap {
+      width: 3%;
+    }
+
+    .CodeMirror-merge-2pane .CodeMirror-merge-pane {
+      width: 48%;
+    }
+  </style>
 </head>
+
 <body>
   <div align="center">
-      <table style="width: 100%">
-          <tbody><tr>
-    <td style="width: 40%; text-align: left;"><span class="fileloc badge badge-secondary">Local</span></td>
-    <td style="text-align: center"><button type="button" class="btn btn-sm btn-success" id="save-btn">Close</button></td>
-    <td style="width: 40%; text-align: right;"><span class="fileloc badge badge-secondary">Remote</span></td>
-          </tr>
-      </tbody></table>
+    <table style="width: 100%">
+      <tbody>
+        <tr>
+          <td style="width: 40%; text-align: left;">
+            <span class="badge badge-secondary">Local</span>
+          </td>
+          <td style="text-align: center">
+            <button type="button" class="btn btn-sm btn-success" id="save-btn">Close</button>
+          </td>
+          <td style="width: 40%; text-align: right;">
+            <span class="badge badge-secondary">Remote</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-<div id="view"></div>
+  <div id="view"></div>
 
-<script>
-var mergeView;
-var diffOnly = false;
+  <script>
+    var mergeView;
+    var diffOnly = false;
 
-function resizeView() {
-  var h = $(window).height() - 50;
-  $("div.CodeMirror").height(h);
-  $("div.CodeMirror-merge-editor").height(h);
-  $("div.CodeMirror-merge").height(h);
-  $("div#view").height(h);
-  mergeView.editor().refresh();
-  mergeView.rightOriginal().refresh();
-}
-
-function detectMode(filename) {
-  var info = CodeMirror.findModeByFileName(filename);
-  var mode, spec;
-  if (info) {
-    mode = info.mode;
-    spec = info.mime;
-    if (spec === 'text/x-csrc') {
-      spec = 'text/x-c++src';
+    function resizeView() {
+      var h = $(window).height() - 50;
+      $("div.CodeMirror").height(h);
+      $("div.CodeMirror-merge-editor").height(h);
+      $("div.CodeMirror-merge").height(h);
+      $("div#view").height(h);
+      mergeView.editor().refresh();
+      mergeView.rightOriginal().refresh();
     }
-  } else {
-    mode = null;
-    spec = 'text/plain';
-  }
-  return {
-    Mode: mode,
-    Spec: spec
-  };
-}
 
-function trySave() {
-  if (diffOnly) {
-    $.get("/close");
-    return;
-  }
-  var request = {
-    Content: mergeView.editor().getDoc().getValue(),
-  };
-  $.post("/save", request, function(resp) {
-    if (resp.Status == 'OK') {
-      $.get("/close");
-    } else {
-      console.log(resp.Message);
-      alert("Error saving merged file: " + resp.Message);
+    function detectMode(filename) {
+      var info = CodeMirror.findModeByFileName(filename);
+      var mode, spec;
+      if (info) {
+        mode = info.mode;
+        spec = info.mime;
+        if (spec === 'text/x-csrc') {
+          spec = 'text/x-c++src';
+        }
+      } else {
+        mode = null;
+        spec = 'text/plain';
+      }
+      return {
+        Mode: mode,
+        Spec: spec
+      };
     }
-    $("body").html("<b>You can now close the window.</b>");
-  }).fail(function() {
-    alert('An error occured while trying to save the file.');
-  });
-}
 
-function initUI() {
-  $.get('/get-local-remote').done(function(data) {
-    diffOnly = data.DiffOnly;
-    if (data.DiffOnly) {
-      $('#save-btn').html("Close");
-    } else {
-      $('#save-btn').html("Save & Close");
+    function trySave() {
+      if (diffOnly) {
+        $.get("/close");
+        return;
+      }
+      var request = {
+        Content: mergeView.editor().getDoc().getValue(),
+      };
+      $.post("/save", request, function(resp) {
+        if (resp.Status == 'OK') {
+          $.get("/close");
+        } else {
+          console.log(resp.Message);
+          alert("Error saving merged file: " + resp.Message);
+        }
+        $("body").html("<b>You can now close the window.</b>");
+      }).fail(function() {
+        alert('An error occured while trying to save the file.');
+      });
     }
-    var target = document.getElementById("view");
-    target.innerHTML = "";
-    mergeView = CodeMirror.MergeView(target, {
-      value: data.LocalContent,
-      origLeft: null,
-      orig: data.RemoteContent,
-      lineNumbers: true,
-      mode: null,
-      highlightDifferences: true,
-      connect: "align",
-      collapseIdentical: false
+
+    function initUI() {
+      $.get('/get-local-remote').done(function(data) {
+        diffOnly = data.DiffOnly;
+        if (data.DiffOnly) {
+          $('#save-btn').html("Close");
+        } else {
+          $('#save-btn').html("Save & Close");
+        }
+        var target = document.getElementById("view");
+        target.innerHTML = "";
+        mergeView = CodeMirror.MergeView(target, {
+          value: data.LocalContent,
+          origLeft: null,
+          orig: data.RemoteContent,
+          lineNumbers: true,
+          mode: null,
+          highlightDifferences: true,
+          connect: "align",
+          collapseIdentical: false
+        });
+        var mime = detectMode(data.Filename);
+        document.title = "Merging " + data.Filename;
+        CodeMirror.autoLoadMode(mergeView.editor(), mime.Mode);
+        CodeMirror.autoLoadMode(mergeView.rightOriginal(), mime.Mode);
+        mergeView.options.mode = mime.Mode;
+        mergeView.editor().setOption('mode', mime.Spec);
+        mergeView.rightOriginal().setOption('mode', mime.Spec);
+        resizeView();
+      }).fail(function() {
+        alert('Failed to open the file.');
+      });
+    }
+
+    $(window).resize(function() {
+      resizeView();
     });
-    var mime = detectMode(data.Filename);
-    document.title = "Merging " + data.Filename;
-    CodeMirror.autoLoadMode(mergeView.editor(), mime.Mode);
-    CodeMirror.autoLoadMode(mergeView.rightOriginal(), mime.Mode);
-    mergeView.options.mode = mime.Mode;
-    mergeView.editor().setOption('mode', mime.Spec);
-    mergeView.rightOriginal().setOption('mode', mime.Spec);
-    resizeView();
-  }).fail(function() {
-    alert('Failed to open the file.');
-  });
-}
 
-$(window).resize(function() {
-  resizeView();
-});
+    window.onload = function() {
+      initUI();
+      $("#save-btn").click(function() {
+        trySave();
+      });
+    };
 
-window.onload = function() {
-  initUI();
-  $("#save-btn").click(function() {
-    trySave();
-  });
-};
-
-$.get("/heartbeat");
-setInterval(function() {
-  $.get("/heartbeat");
-}, 1000);
-
-</script>
+    $.get("/heartbeat");
+    setInterval(function() {
+      $.get("/heartbeat");
+    }, 1000);
+  </script>
 
 </body>
+
 </html>
