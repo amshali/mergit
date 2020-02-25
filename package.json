@@ -30,10 +30,10 @@
   "pkg": {
     "assets": [
       "index.html",
-			"./node_modules/diff-match-patch/**/*",
-			"./node_modules/codemirror-minified/**/*",
-			"./node_modules/jquery/dist/**/*",
-			"./node_modules/bootstrap/dist/**/*"
+      "./node_modules/diff-match-patch/**/*",
+      "./node_modules/codemirror-minified/**/*",
+      "./node_modules/jquery/dist/**/*",
+      "./node_modules/bootstrap/dist/**/*"
     ]
   }
 }
