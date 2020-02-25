@@ -120,7 +120,10 @@
     margin-left: 10px;
   }
   .CodeMirror-merge-2pane .CodeMirror-merge-gap {
-      width: 3%;
+    width: 3%;
+  }
+  .CodeMirror-merge-2pane .CodeMirror-merge-pane {
+    width: 48%;
   }
   .fileloc {
     margin-left: 20px;
@@ -129,11 +132,15 @@
 </style>
 </head>
 <body>
-<div class="container" align="center">
-  <span class="fileloc badge badge-secondary">Local</span>
-  <button type="button" class="btn btn-sm btn-success" id="save-btn">Save and Close</button>
-  <span class="fileloc badge badge-secondary">Remote</span>
-</div>
+  <div align="center">
+      <table style="width: 100%">
+          <tbody><tr>
+    <td style="width: 48%; text-align: left;"><span class="fileloc badge badge-secondary">Local</span></td>
+    <td><button type="button" class="btn btn-sm btn-success" id="save-btn">Close</button></td>
+    <td style="width: 48%; text-align: right;"><span class="fileloc badge badge-secondary">Remote</span></td>
+          </tr>
+      </tbody></table>
+  </div>
 <div id="view"></div>
 
 <script>
@@ -231,8 +238,13 @@ window.onload = function() {
     trySave();
   });
 };
+
+$.get("/heartbeat");
+setInterval(function() {
+  $.get("/heartbeat");
+}, 1000);
+
 </script>
 
 </body>
 </html>
-

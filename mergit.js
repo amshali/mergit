@@ -8,9 +8,9 @@ var argv = require('optimist')
     .default('diff', false)
     .demand(['local', 'remote'])
     .argv;
+var os = require('os');
 var express = require('express');
-var app = require('express')();
-var http = require('http').Server(app);
+var app = express();
 var fs = require('fs');
 var bodyParser = require('body-parser');
 var child_process = require('child_process');
@@ -53,7 +53,13 @@ app.get('/get-local-remote', function(req, res) {
 });
 
 app.get('/close', function(req, res) {
+  res.end();
   process.exit(0);
+});
+
+app.get('/heartbeat', function(req, res) {
+  res.end();
+  heartbeatRcv = Date.now();
 });
 
 app.post('/save', function(req, res) {
@@ -78,16 +84,32 @@ app.post('/save', function(req, res) {
   }
 });
 
-http.listen(argv.port, '127.0.0.1');
+function getChromePath() {
+  if (os.type() == 'Linux') {
+    return "/usr/bin/google-chrome";
+  } else if (os.type() == 'Darwin') {
+    return "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+  }
+}
 
-(async () => {
-  const browser = await puppeteer.launch({
-      headless: false,
-      args: ['--app=http://localhost:9898'],
-      executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-    }
-  );
-  process.on('exit', async () => {
-    await browser.close();
-  });
-})();
+let server = app.listen(0, () => {
+  (async () => {
+    const browser = await puppeteer.launch({
+        headless: false,
+        args: ['--app=http://localhost:' + server.address().port],
+        executablePath: getChromePath()
+      }
+    );
+    process.on('exit', async () => {
+      await browser.close();
+    });
+  })();
+});
+
+var heartbeatRcv = Date.now();
+setInterval(() => {
+  if(Date.now() - heartbeatRcv > 1100) {
+    console.log("View process exited. I might as well.");
+    process.exit(1);
+  }
+}, 1800);
