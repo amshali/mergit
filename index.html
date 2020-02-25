@@ -102,12 +102,12 @@
   <style>
     body {
       font-family: Monaco, 'Roboto Mono', monospace;
-      font-size: 1.2em;
       margin: 2px;
     }
 
     .CodeMirror {
       line-height: 1.2;
+      font-size: 18px;
     }
 
     div.container {
@@ -209,6 +209,7 @@
         var target = document.getElementById("view");
         target.innerHTML = "";
         mergeView = CodeMirror.MergeView(target, {
+          theme: 'default',
           value: data.LocalContent,
           origLeft: null,
           orig: data.RemoteContent,
