@@ -25,5 +25,15 @@
     "jquery": "^3.4.1",
     "optimist": "^0.6.1",
     "puppeteer": "^2.1.1"
+  },
+  "bin": "./mergit.js",
+  "pkg": {
+    "assets": [
+      "index.html",
+			"./node_modules/diff-match-patch/**/*",
+			"./node_modules/codemirror-minified/**/*",
+			"./node_modules/jquery/dist/**/*",
+			"./node_modules/bootstrap/dist/**/*"
+    ]
   }
 }
