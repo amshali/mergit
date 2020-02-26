@@ -23,3 +23,16 @@ cp bin/macos/mergit /usr/local/bin/
 # Linux
 cp bin/linux/mergit /usr/local/bin/
 ```
+
+## How to use?
+
+Edit your `~/.gitconfig`  file and set up as following:
+
+```
+[merge]
+  tool = mergit
+[mergetool "mergit"]
+  cmd = mergit --local "$LOCAL" --remote "$REMOTE" --merged "$MERGED"
+[mergetool]
+  keepBackup = false
+```
