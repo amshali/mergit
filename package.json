@@ -23,7 +23,7 @@
     "commander": "^5.0.0",
     "diff-match-patch": "^1.0.4",
     "express": "^4.17.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "puppeteer": "^2.1.1"
   },
   "devDependencies": {
